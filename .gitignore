@@ -1,0 +1,156 @@
+# Power Verification Dashboard - Git Ignore File
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+desktop.ini
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# Node.js (if you add build tools later)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build outputs (if you add build tools later)
+dist/
+build/
+out/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Backup files
+*.backup
+*.bak
+*~
+.orig
+
+# Test coverage (if you add testing later)
+coverage/
+.nyc_output
+
+# Local development files
+.local/
+local.*
+
+# Database files (if you add database later)
+*.sqlite
+*.sqlite3
+*.db
+
+# Sensitive configuration files
+config.local.js
+secrets.js
+credentials.json
+
+# Personal notes and documentation drafts
+NOTES.md
+TODO.md
+DRAFT_*.md
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Image working files
+*.psd
+*.ai
+*.sketch
+
+# Office temporary files
+~$*
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Local data files (keep sample data, but ignore user data)
+data/user_*
+data/backup_*
+data/*_backup.json
+
+# Deployment files
+.github/workflows/
+deploy.sh
+deploy.bat
+
+# Documentation generation
+docs/generated/
+*.pdf
+
+# Analytics and tracking files
+analytics/
+tracking/
+
+# Performance testing files
+benchmark/
+performance/
+
+# Screenshots and demos (keep essential ones, ignore test screenshots)
+screenshots/test_*
+demo/temp_*

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Verification Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">Power Verification Dashboard</h1>
+            <nav class="nav">
+                <button id="viewModeBtn" class="nav-btn active">View Mode</button>
+                <button id="adminModeBtn" class="nav-btn">Admin Mode</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Week Selection -->
+            <section class="week-selection">
+                <div class="section-header">
+                    <h2>Week Selection</h2>
+                    <div class="data-status" id="dataStatus">
+                        <span class="status-indicator" id="statusIndicator">🔄</span>
+                        <span class="status-text" id="statusText">Loading...</span>
+                    </div>
+                </div>
+                <div class="week-controls">
+                    <select id="weekSelect" class="week-select">
+                        <option value="">Select a week...</option>
+                    </select>
+                    <button id="showAllWeeksBtn" class="btn secondary">Show All Weeks</button>
+                    <button id="showTrendsBtn" class="btn primary">Show Trends</button>
+                </div>
+            </section>
+
+            <!-- Admin Panel (Hidden by default) -->
+            <section id="adminPanel" class="admin-panel hidden">
+                <h2>Admin Panel</h2>
+                <div class="admin-controls">
+                    <input type="password" id="adminPassword" placeholder="Enter admin password" class="admin-input">
+                    <button id="authenticateBtn" class="btn primary">Authenticate</button>
+                </div>
+                <div id="adminActions" class="admin-actions hidden">
+                    <!-- Admin Navigation Tabs -->
+                    <div class="admin-nav">
+                        <button id="uploadTabBtn" class="admin-tab-btn active">📤 Upload New Data</button>
+                        <button id="manageTabBtn" class="admin-tab-btn">📋 Manage Weeks</button>
+                        <button id="bulkTabBtn" class="admin-tab-btn">📦 Bulk Operations</button>
+                    </div>
+
+                    <!-- Upload New Week Data Tab -->
+                    <div id="uploadTab" class="admin-tab active">
+                        <h3>Upload New Week Data</h3>
+                        <div class="upload-form">
+                            <input type="text" id="weekNumber" placeholder="Week number (e.g., 26ww07)" class="form-input">
+                            <textarea id="dataInput" placeholder="Paste your three tables here..." class="data-textarea"></textarea>
+                            <button id="parseDataBtn" class="btn primary">Parse & Preview Data</button>
+                            <button id="saveDataBtn" class="btn success hidden">Save Week Data</button>
+                        </div>
+                    </div>
+
+                    <!-- Manage Existing Weeks Tab -->
+                    <div id="manageTab" class="admin-tab hidden">
+                        <h3>Manage Existing Weeks</h3>
+                        <div class="week-management">
+                            <div class="week-stats">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="totalWeeksCount">0</div>
+                                    <div class="stat-label">Total Weeks</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="latestWeekNumber">-</div>
+                                    <div class="stat-label">Latest Week</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="totalDataSize">0 KB</div>
+                                    <div class="stat-label">Data Size</div>
+                                </div>
+                            </div>
+                            <div class="week-list-container">
+                                <div class="week-list-header">
+                                    <h4>Week Data Management</h4>
+                                    <button id="refreshWeekListBtn" class="btn secondary small">🔄 Refresh</button>
+                                </div>
+                                <div id="weekList" class="week-list">
+                                    <div class="no-weeks-message">No weeks found. Upload some data first.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Operations Tab -->
+                    <div id="bulkTab" class="admin-tab hidden">
+                        <h3>Bulk Operations</h3>
+                        <div class="bulk-operations">
+                            <div class="bulk-section">
+                                <h4>📤 Export Operations</h4>
+                                <div class="bulk-controls">
+                                    <button id="exportForRepoBtn" class="btn success">🚀 Export for Repository (Shared)</button>
+                                    <button id="exportAllBtn" class="btn primary">📥 Export All Week Data</button>
+                                    <button id="exportSelectedBtn" class="btn secondary">📥 Export Selected Weeks</button>
+                                    <button id="exportBackupBtn" class="btn info">💾 Create Full Backup</button>
+                                </div>
+                                <div class="shared-data-info">
+                                    <p><strong>🚀 Repository Export:</strong> Creates sharedData.json for GitHub. All team members will see updates!</p>
+                                    <p><strong>📥 Regular Export:</strong> Downloads data for personal backup or local use.</p>
+                                </div>
+                                <div class="export-options hidden" id="exportOptions">
+                                    <h5>Select weeks to export:</h5>
+                                    <div id="exportWeekSelection" class="week-selection-grid"></div>
+                                    <div class="export-format">
+                                        <label>Format:</label>
+                                        <select id="exportFormat">
+                                            <option value="json">JSON</option>
+                                            <option value="csv">CSV Tables</option>
+                                        </select>
+                                    </div>
+                                    <div class="export-actions">
+                                        <button id="executeExportBtn" class="btn success">📥 Export Selected Weeks</button>
+                                        <button id="cancelExportBtn" class="btn secondary">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bulk-section">
+                                <h4>📥 Import Operations</h4>
+                                <div class="bulk-controls">
+                                    <button id="importDataBtn" class="btn primary">📤 Import Week Data</button>
+                                    <button id="restoreBackupBtn" class="btn warning">🔄 Restore from Backup</button>
+                                </div>
+                                <div class="import-info">
+                                    <p><strong>Supported formats:</strong> JSON backup files, CSV tables</p>
+                                    <p><strong>Import behavior:</strong> Overwrites existing weeks with same numbers</p>
+                                </div>
+                            </div>
+                            <div class="bulk-section danger">
+                                <h4>⚠️ Danger Zone</h4>
+                                <div class="bulk-controls">
+                                    <button id="clearAllDataBtn" class="btn danger">🗑️ Clear All Data</button>
+                                    <button id="resetDashboardBtn" class="btn danger">🔄 Reset Dashboard</button>
+                                </div>
+                                <div class="danger-warning">
+                                    <p><strong>Warning:</strong> These operations cannot be undone!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Display Section -->
+            <section class="data-section">
+                <!-- Table 1: Adjusted CDYN Table -->
+                <div class="table-container">
+                    <h3>ADJUSTED CDYN TABLE</h3>
+                    <div class="table-wrapper">
+                        <table id="cdynTable" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button class="chart-toggle-btn" data-chart="cdynChart">📊 Show Chart</button>
+                    <div id="cdynChart" class="chart-container hidden">
+                        <canvas id="cdynCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Table 2: PNC DMR Cdyn changes w.r.t previous Rollup -->
+                <div class="table-container">
+                    <h3>PNC DMR Cdyn Changes w.r.t Previous Rollup</h3>
+                    <div class="table-wrapper">
+                        <table id="previousRollupTable" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button class="chart-toggle-btn" data-chart="previousRollupChart">📊 Show Chart</button>
+                    <div id="previousRollupChart" class="chart-container hidden">
+                        <canvas id="previousRollupCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Table 3: PNC DMR Cdyn changes w.r.t OLD PDK Rollup -->
+                <div class="table-container">
+                    <h3>PNC DMR Cdyn Changes w.r.t OLD PDK Rollup (25ww16)</h3>
+                    <div class="table-wrapper">
+                        <table id="oldPdkTable" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <button class="chart-toggle-btn" data-chart="oldPdkChart">📊 Show Chart</button>
+                    <div id="oldPdkChart" class="chart-container hidden">
+                        <canvas id="oldPdkCanvas"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trends Section -->
+            <section id="trendsSection" class="trends-section hidden">
+                <h2>Weekly Trends Analysis</h2>
+                <div class="trends-container">
+                    <div class="trend-chart">
+                        <h3>Geomean CDYN Trend</h3>
+                        <canvas id="geomeanTrendChart"></canvas>
+                    </div>
+                    <div class="trend-chart">
+                        <h3>Partition Changes Over Time</h3>
+                        <canvas id="partitionTrendChart"></canvas>
+                    </div>
+                    <div class="trend-chart">
+                        <h3>IPC Performance Trends</h3>
+                        <canvas id="ipcTrendChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Week Comparison Section -->
+            <section id="comparisonSection" class="comparison-section hidden">
+                <h2>Week-to-Week Comparison</h2>
+                <div class="comparison-controls">
+                    <select id="week1Select" class="week-select">
+                        <option value="">Select Week 1...</option>
+                    </select>
+                    <span>vs</span>
+                    <select id="week2Select" class="week-select">
+                        <option value="">Select Week 2...</option>
+                    </select>
+                    <button id="compareWeeksBtn" class="btn primary">Compare</button>
+                </div>
+                <div id="comparisonResults" class="comparison-results"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Intel Corporation - Power Verification Team</p>
+            <p>Last updated: <span id="lastUpdated">Never</span></p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/dataManager.js"></script>
+    <script src="js/tableManager.js"></script>
+    <script src="js/chartManager.js"></script>
+    <script src="js/adminManager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
