@@ -135,7 +135,7 @@ data/backup_*
 data/*_backup.json
 
 # Deployment files
-.github/workflows/
+# .github/workflows/ - Allow workflows for GitHub Pages
 deploy.sh
 deploy.bat
 
